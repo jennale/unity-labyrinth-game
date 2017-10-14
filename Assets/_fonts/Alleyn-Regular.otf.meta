@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 75b45f14db1c540ecb904efbf52b70d0
+timeCreated: 1507942188
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Alleyn
+  fontNames:
+  - Alleyn
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
