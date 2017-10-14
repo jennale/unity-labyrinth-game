@@ -9,14 +9,16 @@ public class PauseController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         Button exit = GameObject.Find("ExitButton").GetComponent<Button>();
-        Button restart = GameObject.Find("RestartButton").GetComponent<Button>();
-        Button unpause = GameObject.Find("UnpauseButton").GetComponent<Button>();
-        Button pause = GameObject.Find("PauseButton").GetComponent<Button>();
+		exit.onClick.AddListener(ReturnToStart);
 
-        exit.onClick.AddListener(ReturnToStart);
-        restart.onClick.AddListener(RestartGame);
-        unpause.onClick.AddListener(ContinueGame);
-        pause.onClick.AddListener(PauseGame);
+        Button restart = GameObject.Find("RestartButton").GetComponent<Button>();
+		restart.onClick.AddListener(RestartGame);
+
+        Button unpause = GameObject.Find("UnpauseButton").GetComponent<Button>();
+		unpause.onClick.AddListener(ContinueGame);
+  
+        Button pause = GameObject.Find("PauseButton").GetComponent<Button>();
+		pause.onClick.AddListener(PauseGame);
 
         gameObject.SetActive(false);
 	}

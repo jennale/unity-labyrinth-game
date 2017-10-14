@@ -12,9 +12,6 @@ public class SplashscreenController : MonoBehaviour {
 	private Button startButton;
     private GameObject starburst;
 
-	private AssetBundle myLoadedAssetBundle;
-	private string[] scenePaths;
-
 	void Start () {
 		//Add button listener
 		startButton = GameObject.Find("StartButton").GetComponent<Button>();
