@@ -17,16 +17,11 @@ public class PlayerController : MonoBehaviour {
 	Animator anim; //Reference the Animator component
 	GameObject[] pickups;
 
-	//Awake is similar to start, gets called whether script is enabled or not, good for references
-	void Awake()
-	{
+    // Use this for initialization
+    void Start () {
 		anim = GetComponent<Animator> ();
 		rb = GetComponent<Rigidbody> ();
 		pickups = GameObject.FindGameObjectsWithTag ("Pick Up");
-	}
-
-	// Use this for initialization
-	void Start () {
 	}
 	
 	// Update is called once per frame, runs along with rendering
@@ -41,16 +36,7 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		bool isRunning = Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift);
-		float speed = (isRunning) ? runSpeed : walkSpeed;
-
-		var x = Input.GetAxis("Horizontal") * Time.deltaTime * rotateSpeed;
-		var z = Input.GetAxis("Vertical") * Time.deltaTime * speed;
-
-		transform.Rotate(0, x, 0);
-		transform.Translate(0, 0, z);
-
-		AnimateMovement (x, z, isRunning );
-
+        HandleMovement(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), isRunning);
 	}
 
 	/// <summary>
@@ -65,6 +51,18 @@ public class PlayerController : MonoBehaviour {
 			pickup.SetActive (true);
 		}
 	}
+
+    void HandleMovement(float HorizontalInput, float VerticalInput, bool isRunning) {
+        float speed = (isRunning) ? runSpeed : walkSpeed;
+
+        var x = HorizontalInput * Time.deltaTime * rotateSpeed;
+        var z = VerticalInput * Time.deltaTime * speed;
+
+        transform.Rotate(0, x, 0);
+        transform.Translate(0, 0, z);
+
+        AnimateMovement(x, z, isRunning);
+    }
 
 	/// <summary>
 	/// Animates the movement.

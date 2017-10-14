@@ -13,7 +13,7 @@ public class LeaderboardController : MonoBehaviour {
     /// <summary>
     /// The max number of scores to keep in the leaderboard
     /// </summary>
-    private const int MAX_NUM_RECORDS = 10;
+    private const int MaxNumRecords = 10;
 
     //Buttons
 	private Button backButton;
@@ -100,7 +100,7 @@ public class LeaderboardController : MonoBehaviour {
     /// <param name="user">User.</param>
 	public void AddToLeaderboard(int score, string user) {
         
-		if (leaderboard.Count >= MAX_NUM_RECORDS) {
+		if (leaderboard.Count >= MaxNumRecords) {
 			leaderboard.RemoveAt (0);
         } 
 
