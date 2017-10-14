@@ -27,9 +27,7 @@ public class CameraController : MonoBehaviour {
 	/// Runs at end of update, makes sure user has moved before moving cam
 	/// </summary>
 	void LateUpdate() {
-		transform.position = player.transform.position + offset;
-		transform.LookAt(player.transform.position + offset);
-			
+		transform.position = player.transform.position + offset;			
 	}
 }
 	

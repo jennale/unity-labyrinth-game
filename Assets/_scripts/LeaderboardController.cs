@@ -25,8 +25,8 @@ public class LeaderboardController : MonoBehaviour {
 
 	private bool updated = false;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         //TODO: Replace the leaderboard with UserPreferences if there is one saved.
 		leaderboard = new SortedList ();
 		leaderboardNames = GameObject.Find ("NameList").GetComponent<Text> ();
