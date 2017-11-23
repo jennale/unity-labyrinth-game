@@ -32,6 +32,7 @@ public class EndGameController : MonoBehaviour {
         submit.onClick.AddListener(SubmitScore);
 
         gameObject.SetActive(false);
+        //private GameController gameController = GameController.Instance;
     }
 
     // Update is called once per frame
@@ -63,10 +64,7 @@ public class EndGameController : MonoBehaviour {
     void SubmitScore() {
         Debug.Log("toggling submit");
 
-        LeaderboardController.LeaderboardScore sendScore = new LeaderboardController.LeaderboardScore();
-        sendScore.name = usernameInput.text;
-        sendScore.score = currentScore.score;
-        leaderboard.SendMessage("AddToLeaderboard", sendScore);
+        GameMaster.AddToLeaderboard(currentScore.score, usernameInput.text);
     }
 
     void RestartGame()

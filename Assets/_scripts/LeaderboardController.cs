@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class LeaderboardController : MonoBehaviour {
     //The leaderboard list
 	static SortedList leaderboard;
+    public static GameObject leaderboardCtrl;
 
     /// <summary>
     /// The max number of scores to keep in the leaderboard
@@ -23,12 +24,11 @@ public class LeaderboardController : MonoBehaviour {
 	private Text leaderboardNames;
 	private Text leaderboardNumbers;
 
-	private static bool updated = false;
 
     // Use this for initialization
     void Start () {
         //TODO: Replace the leaderboard with UserPreferences if there is one saved.
-        leaderboard = new SortedList();
+        leaderboard = GameMaster.leaderboard;
 		leaderboardNames = GameObject.Find ("NameList").GetComponent<Text> ();
 		leaderboardNumbers = GameObject.Find ("ScoreList").GetComponent<Text> ();
 
@@ -44,17 +44,16 @@ public class LeaderboardController : MonoBehaviour {
         //Test button for adding random scores...
         Button testButton = GameObject.Find("TestButton").GetComponent<Button>();
         testButton.onClick.AddListener(testAdd);
-		
+
         //Hide the leaderboard on gamestart
         gameObject.SetActive(false);
-        DontDestroyOnLoad(transform.gameObject);
 	}
 
 	// Update is called once per frame
 	void Update()
 	{
         //If the leaderboard was updated, create the new leaderboard text.
-		if (updated)
+        if (GameMaster.updated)
 		{
 			CreateLeaderboard();
 		}
@@ -81,7 +80,7 @@ public class LeaderboardController : MonoBehaviour {
 
         //Scores are sorted from lowest to highest scores (reverse for loop)
         for (int i = 0; i < leaderboard.Count; i++ ) {
-            LeaderboardScore val = (LeaderboardScore)leaderboard.GetByIndex(i);
+            GameMaster.LeaderboardScore val = (GameMaster.LeaderboardScore)leaderboard.GetByIndex(i);
             names += orderLabel.ToString() + "\t\t" + val.name + "\n";
             scores += val.score + "\n";
 			orderLabel++; 
@@ -90,38 +89,8 @@ public class LeaderboardController : MonoBehaviour {
 		leaderboardNames.text = names;
 		leaderboardNumbers.text = scores;
 
-		updated = false;
-	}
-
-    /// <summary>
-    /// Adds to leaderboard, using a sorted list. The list is sorted by
-    /// the following order: Score (0000XX) > User > Date
-    /// </summary>
-    /// <param name="score">Score integer.</param>
-    /// <param name="user">User.</param>
-	public static void AddToLeaderboard(float score, string user) {
-        
-		if (leaderboard.Count >= MaxNumRecords) {
-            leaderboard.RemoveAt (MaxNumRecords-1);
-        } 
-
-        var newScore = new LeaderboardScore ();
-		newScore.name = user;
-        newScore.score = (int)score;
-
-        string key = ((int)score).ToString("D5") + "0-" + user + System.DateTime.Now.ToString();
-
-		try {
-			leaderboard.Add (key, newScore);
-		} catch (System.Exception e) {
-			Debug.Log ("A score already exists with this info\n" + e.Message);
-		}
-
-		updated = true;
-	}
-
-    public static void AddToLeaderboard(LeaderboardScore score) {
-        AddToLeaderboard(score.score, score.name);
+        //updated = false;
+        GameMaster.updated = false;
     }
 
     /// <summary>
@@ -129,16 +98,7 @@ public class LeaderboardController : MonoBehaviour {
     /// </summary>
 	void testAdd()
 	{
-		AddToLeaderboard((int)Random.Range(0.0f, 100.0f), "Username" + leaderboard.Count.ToString());
-	}
-
-
-    /// <summary>
-    /// Score object.
-    /// </summary>
-	public class LeaderboardScore {
-		public string name;
-		public float score;
+        GameMaster.AddToLeaderboard((int)Random.Range(0.0f, 100.0f), "Username" + leaderboard.Count.ToString());
 	}
 
 }
