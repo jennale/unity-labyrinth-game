@@ -3,59 +3,98 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class PlayerController : MonoBehaviour {
-	
+
+    //Player object
 	private Rigidbody rb;
-	private float startX;
-	private float startY;
-	public float walkSpeed = 2f; //Making values public puts them in the Unity inspector, can set defaults
-	public float runSpeed = 4f;
-	private float rotateSpeed = 100f;
-	private int score = 0;
-	public Text scoreText;
-	Animator anim; //Reference the Animator component
+	private Animator anim; //Reference the Animator component
 	GameObject[] pickups;
+    public const float WalkSpeed = 2f; //Making values public puts them in the Unity inspector, can set defaults
+    public const float RunSpeed = 4f;
+    private const float RotateSpeed = 100f;
+
+
+    //Timer / score
+    private bool gameStarted = false;
+    private bool winStatus = false;
+    private float score = 0.0f;
+    public Text scoreText;
+
+    //UI objects
+    public GameObject endScreen;
+    public GameObject activeUI;
+
 
     // Use this for initialization
     void Start () {
 		anim = GetComponent<Animator> ();
 		rb = GetComponent<Rigidbody> ();
 		pickups = GameObject.FindGameObjectsWithTag ("Pick Up");
+        scoreText = GameObject.Find("ScoreText").GetComponent<Text>();
 	}
 	
 	// Update is called once per frame, runs along with rendering
 	void Update () {
+        if (gameStarted) {
+            score += Time.deltaTime;
+
+            scoreText.text = "Score: " + score.ToTimestamp();
+        }
 	}
+
 		
 	// FixedUpdate fires each physics update
 	void FixedUpdate ()
 	{
 		if (Input.GetKeyDown (KeyCode.Space)) {
-			Reset ();
+			//Reset ();
 		}
 
 		bool isRunning = Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift);
         HandleMovement(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), isRunning);
 	}
 
-	/// <summary>
-	/// Reset this instance.
-	/// </summary>
-	void Reset() {
-		transform.rotation = new Quaternion (0, 0, 0, 0);
-		transform.position = new Vector3(0, 0, 0);
 
-		foreach (GameObject pickup in pickups)
-		{
-			pickup.SetActive (true);
-		}
-	}
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("colliding!");
+
+        //START TIMER
+        if (other.gameObject.CompareTag("StartTimer") && !gameStarted)
+        {
+            StartGame();
+        }
+
+
+        //END TIMER, END GAME
+        if (other.gameObject.CompareTag("EndTimer") && gameStarted)
+        {
+            winStatus = true;
+            EndGame();
+        }
+    }
+
+    void EndGame() {
+        gameStarted = false;
+        endScreen.SetActive(true);
+
+        EndGameController.EndScore endScore = new EndGameController.EndScore();
+
+        endScore.score = this.score;
+        endScore.winStatus = this.winStatus;
+
+        endScreen.SendMessage("ToggleEndGame", endScore);
+    }
+
+    void StartGame() {
+        gameStarted = true;
+
+    }
 
     void HandleMovement(float HorizontalInput, float VerticalInput, bool isRunning) {
-        float speed = (isRunning) ? runSpeed : walkSpeed;
+        float speed = (isRunning) ? RunSpeed : WalkSpeed;
 
-        var x = HorizontalInput * Time.deltaTime * rotateSpeed;
+        var x = HorizontalInput * Time.deltaTime * RotateSpeed;
         var z = VerticalInput * Time.deltaTime * speed;
 
         transform.Rotate(0, x, 0);
@@ -64,12 +103,6 @@ public class PlayerController : MonoBehaviour {
         AnimateMovement(x, z, isRunning);
     }
 
-	/// <summary>
-	/// Animates the movement.
-	/// </summary>
-	/// <param name="h">The horizontal movement.</param>
-	/// <param name="v">The vertical movement</param>
-	/// <param name="running">If set to <c>true</c> running.</param>
 	void AnimateMovement(float h, float v, bool running)
 	{
 		bool walking = h != 0f || v != 0f;
@@ -81,19 +114,5 @@ public class PlayerController : MonoBehaviour {
 			running = walking && running;
 		
 		anim.SetBool ("IsRunning", running);
-	}
-		
-	/// <summary>
-	/// Raises the trigger enter event upon collisions.
-	/// </summary>
-	/// <param name="other">Other object's collider</param>
-	void OnTriggerEnter(Collider other) 
-	{
-		if (other.gameObject.CompareTag ("Pick Up"))
-		{
-			other.gameObject.SetActive (false);
-			score++;
-			scoreText.text = "Score: " + score;
-		}
 	}
 }

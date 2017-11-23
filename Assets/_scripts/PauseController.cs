@@ -6,8 +6,13 @@ using UnityEngine.SceneManagement;
 
 public class PauseController : MonoBehaviour {
 
+    GameObject panel;
+    bool paused = false;
+
 	// Use this for initialization
 	void Start () {
+        panel = GameObject.Find("PausePanel");
+
         Button exit = GameObject.Find("ExitButton").GetComponent<Button>();
 		exit.onClick.AddListener(ReturnToStart);
 
@@ -20,26 +25,36 @@ public class PauseController : MonoBehaviour {
         Button pause = GameObject.Find("PauseButton").GetComponent<Button>();
 		pause.onClick.AddListener(PauseGame);
 
-        gameObject.SetActive(false);
+        panel.SetActive(false);
 	}
 
 	// Update is called once per frame
 	void Update () {
-
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            //PauseGame();
+            if (paused) {
+                ContinueGame();
+            } else if (Time.timeScale != 0){
+                PauseGame();
+            }
+        }
 	}
 
     void togglePausePanel () {
-        gameObject.SetActive(!gameObject.activeSelf);
+        panel.SetActive(!panel.activeSelf);
     }
 
 
     void PauseGame() {
         Time.timeScale = 0;
+        paused = true;
         togglePausePanel();
     }
 
     void ContinueGame() {
         Time.timeScale = 1;
+        paused = false;
         togglePausePanel();
     }
 

@@ -23,12 +23,12 @@ public class LeaderboardController : MonoBehaviour {
 	private Text leaderboardNames;
 	private Text leaderboardNumbers;
 
-	private bool updated = false;
+	private static bool updated = false;
 
     // Use this for initialization
     void Start () {
         //TODO: Replace the leaderboard with UserPreferences if there is one saved.
-		leaderboard = new SortedList ();
+        leaderboard = new SortedList();
 		leaderboardNames = GameObject.Find ("NameList").GetComponent<Text> ();
 		leaderboardNumbers = GameObject.Find ("ScoreList").GetComponent<Text> ();
 
@@ -47,6 +47,7 @@ public class LeaderboardController : MonoBehaviour {
 		
         //Hide the leaderboard on gamestart
         gameObject.SetActive(false);
+        DontDestroyOnLoad(transform.gameObject);
 	}
 
 	// Update is called once per frame
@@ -79,8 +80,8 @@ public class LeaderboardController : MonoBehaviour {
         int orderLabel = 1;
 
         //Scores are sorted from lowest to highest scores (reverse for loop)
-        for (int i = leaderboard.Count-1; i >= 0; i-- ) {
-            Score val = (Score)leaderboard.GetByIndex(i);
+        for (int i = 0; i < leaderboard.Count; i++ ) {
+            LeaderboardScore val = (LeaderboardScore)leaderboard.GetByIndex(i);
             names += orderLabel.ToString() + "\t\t" + val.name + "\n";
             scores += val.score + "\n";
 			orderLabel++; 
@@ -98,17 +99,17 @@ public class LeaderboardController : MonoBehaviour {
     /// </summary>
     /// <param name="score">Score integer.</param>
     /// <param name="user">User.</param>
-	public void AddToLeaderboard(int score, string user) {
+	public static void AddToLeaderboard(float score, string user) {
         
 		if (leaderboard.Count >= MaxNumRecords) {
-			leaderboard.RemoveAt (0);
+            leaderboard.RemoveAt (MaxNumRecords-1);
         } 
 
-		var newScore = new Score ();
+        var newScore = new LeaderboardScore ();
 		newScore.name = user;
-		newScore.score = score;
+        newScore.score = (int)score;
 
-		string key = score.ToString("D8") + "0-" + user + System.DateTime.Now.ToString();
+        string key = ((int)score).ToString("D5") + "0-" + user + System.DateTime.Now.ToString();
 
 		try {
 			leaderboard.Add (key, newScore);
@@ -118,6 +119,10 @@ public class LeaderboardController : MonoBehaviour {
 
 		updated = true;
 	}
+
+    public static void AddToLeaderboard(LeaderboardScore score) {
+        AddToLeaderboard(score.score, score.name);
+    }
 
     /// <summary>
     /// Tests adding to the leaderboard
@@ -131,8 +136,9 @@ public class LeaderboardController : MonoBehaviour {
     /// <summary>
     /// Score object.
     /// </summary>
-	internal class Score {
+	public class LeaderboardScore {
 		public string name;
-		public int score;
+		public float score;
 	}
+
 }
