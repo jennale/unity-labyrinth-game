@@ -27,8 +27,9 @@ public class LeaderboardController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        //TODO: Replace the leaderboard with UserPreferences if there is one saved.
         leaderboard = GameMaster.leaderboard;
+        GameMaster.InitGame();
+
 		leaderboardNames = GameObject.Find ("NameList").GetComponent<Text> ();
 		leaderboardNumbers = GameObject.Find ("ScoreList").GetComponent<Text> ();
 
@@ -81,15 +82,14 @@ public class LeaderboardController : MonoBehaviour {
         //Scores are sorted from lowest to highest scores (reverse for loop)
         for (int i = 0; i < leaderboard.Count; i++ ) {
             GameMaster.LeaderboardScore val = (GameMaster.LeaderboardScore)leaderboard.GetByIndex(i);
-            names += orderLabel.ToString() + "\t\t" + val.name + "\n";
-            scores += val.score + "\n";
+            names += orderLabel.ToString() + "\t" + val.name + "\n";
+            scores += val.score.ToTimestamp() + "\n";
 			orderLabel++; 
         }
 
 		leaderboardNames.text = names;
 		leaderboardNumbers.text = scores;
 
-        //updated = false;
         GameMaster.updated = false;
     }
 

@@ -7,6 +7,9 @@ TagManager:
   - Pick Up
   - StartTimer
   - EndTimer
+  - Key
+  - Gate
+  - EnemyVision
   layers:
   - Default
   - TransparentFX

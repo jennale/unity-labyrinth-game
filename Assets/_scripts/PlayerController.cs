@@ -8,10 +8,10 @@ public class PlayerController : MonoBehaviour {
     //Player object
 	private Rigidbody rb;
 	private Animator anim; //Reference the Animator component
-	GameObject[] pickups;
     public const float WalkSpeed = 2f; //Making values public puts them in the Unity inspector, can set defaults
     public const float RunSpeed = 4f;
     private const float RotateSpeed = 100f;
+    private GameObject disguise;
 
 
     //Timer / score
@@ -24,13 +24,18 @@ public class PlayerController : MonoBehaviour {
     public GameObject endScreen;
     public GameObject activeUI;
 
+    // Keys
+    public int hasKeys = 0;
+    public bool isDisguised = false;
+
 
     // Use this for initialization
     void Start () {
 		anim = GetComponent<Animator> ();
 		rb = GetComponent<Rigidbody> ();
-		pickups = GameObject.FindGameObjectsWithTag ("Pick Up");
+
         scoreText = GameObject.Find("ScoreText").GetComponent<Text>();
+        disguise = GameObject.Find("Disguise");
 	}
 	
 	// Update is called once per frame, runs along with rendering
@@ -40,19 +45,26 @@ public class PlayerController : MonoBehaviour {
 
             scoreText.text = "Score: " + score.ToTimestamp();
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Disguise();
+        }
+
+        disguise.SetActive(isDisguised);
 	}
 
 		
 	// FixedUpdate fires each physics update
 	void FixedUpdate ()
 	{
-		if (Input.GetKeyDown (KeyCode.Space)) {
-			//Reset ();
-		}
-
 		bool isRunning = Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift);
         HandleMovement(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), isRunning);
 	}
+
+    void Disguise() {
+        isDisguised = !isDisguised;
+    }
 
 
     void OnTriggerEnter(Collider other)
@@ -65,12 +77,35 @@ public class PlayerController : MonoBehaviour {
             StartGame();
         }
 
-
         //END TIMER, END GAME
         if (other.gameObject.CompareTag("EndTimer") && gameStarted)
         {
             winStatus = true;
             EndGame();
+        }
+
+        if (other.gameObject.CompareTag("Key") && gameStarted) {
+            hasKeys++;
+            other.gameObject.SetActive(false);
+        }
+
+        if (other.gameObject.CompareTag("Gate") && hasKeys > 0)
+        {
+            var gate = other.gameObject.GetComponent<GateController>();
+            gate.SendMessage("Unlock");
+            hasKeys--;
+        }
+
+
+        if (other.gameObject.CompareTag("EnemyVision") && !isDisguised)
+        {
+            var cow = other.gameObject.transform.parent.gameObject.GetComponent<EnemyController>();
+
+            if (!cow.isMoving) { //Ony can get spotted if the cow isn't moving (easier)
+				cow.SendMessage("Spotted");
+				GameObject.Find("Camera").SendMessage("LookAt", cow.transform);
+				EndGame();
+            }
         }
     }
 
@@ -92,7 +127,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     void HandleMovement(float HorizontalInput, float VerticalInput, bool isRunning) {
-        float speed = (isRunning) ? RunSpeed : WalkSpeed;
+        float speed = (isRunning && !isDisguised) ? RunSpeed : WalkSpeed;
 
         var x = HorizontalInput * Time.deltaTime * RotateSpeed;
         var z = VerticalInput * Time.deltaTime * speed;
@@ -100,7 +135,7 @@ public class PlayerController : MonoBehaviour {
         transform.Rotate(0, x, 0);
         transform.Translate(0, 0, z);
 
-        AnimateMovement(x, z, isRunning);
+        AnimateMovement(x, z, isRunning && !isDisguised);
     }
 
 	void AnimateMovement(float h, float v, bool running)

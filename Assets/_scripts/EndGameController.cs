@@ -13,7 +13,7 @@ public class EndGameController : MonoBehaviour {
     public InputField usernameInput;
 
 	public GameObject leaderboard;
-    public Button submitScore;
+    public Button submit;
 
     private EndScore currentScore;
 
@@ -28,11 +28,12 @@ public class EndGameController : MonoBehaviour {
         Button restart = GameObject.Find("ButtonRestart").GetComponent<Button>();
         restart.onClick.AddListener(RestartGame);
 
-        Button submit = GameObject.Find("SubmitScoreButton").GetComponent<Button>();
+        submit = GameObject.Find("SubmitScoreButton").GetComponent<Button>();
         submit.onClick.AddListener(SubmitScore);
 
+        usernameInput.text = GameMaster.lastUser;
+
         gameObject.SetActive(false);
-        //private GameController gameController = GameController.Instance;
     }
 
     // Update is called once per frame
@@ -63,8 +64,10 @@ public class EndGameController : MonoBehaviour {
 
     void SubmitScore() {
         Debug.Log("toggling submit");
-
-        GameMaster.AddToLeaderboard(currentScore.score, usernameInput.text);
+		GameMaster.AddToLeaderboard(currentScore.score, usernameInput.text);
+        GameMaster.lastUser = usernameInput.text;
+        submit.interactable = false;
+        submit.GetComponentsInChildren<Text>()[0].text = "Saved!";		
     }
 
     void RestartGame()
