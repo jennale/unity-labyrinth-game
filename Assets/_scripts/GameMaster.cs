@@ -38,10 +38,6 @@ public static class GameMaster {
         var newScore = new LeaderboardScore();
         newScore.name = user;
         newScore.date = date ?? System.DateTime.Now.ToString();
-
-        Debug.Log(score);
-        Debug.Log(score.ToString());
-
         newScore.score = (int)score;
 
         string key = newScore.ToKey();

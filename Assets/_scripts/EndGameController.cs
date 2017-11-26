@@ -43,9 +43,6 @@ public class EndGameController : MonoBehaviour {
 
     public void ToggleEndGame(EndScore endScore)
     {
-        Debug.Log("toggling end game");
-        Debug.Log(endScore.winStatus);
-
         currentScore = endScore;
 
         winStatus = endScore.winStatus;

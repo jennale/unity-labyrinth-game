@@ -43,8 +43,8 @@ public class LeaderboardController : MonoBehaviour {
         CreateLeaderboard();
 
         //Test button for adding random scores...
-        Button testButton = GameObject.Find("TestButton").GetComponent<Button>();
-        testButton.onClick.AddListener(testAdd);
+        //Button testButton = GameObject.Find("TestButton").GetComponent<Button>();
+        //testButton.onClick.AddListener(testAdd);
 
         //Hide the leaderboard on gamestart
         gameObject.SetActive(false);

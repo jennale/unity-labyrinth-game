@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour {
 
     //Player object
-	private Rigidbody rb;
 	private Animator anim; //Reference the Animator component
     public const float WalkSpeed = 2f; //Making values public puts them in the Unity inspector, can set defaults
     public const float RunSpeed = 4f;
@@ -32,7 +31,6 @@ public class PlayerController : MonoBehaviour {
     // Use this for initialization
     void Start () {
 		anim = GetComponent<Animator> ();
-		rb = GetComponent<Rigidbody> ();
 
         scoreText = GameObject.Find("ScoreText").GetComponent<Text>();
         disguise = GameObject.Find("Disguise");
@@ -69,8 +67,6 @@ public class PlayerController : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("colliding!");
-
         //START TIMER
         if (other.gameObject.CompareTag("StartTimer") && !gameStarted)
         {
